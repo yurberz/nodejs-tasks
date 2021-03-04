@@ -25,6 +25,7 @@ const writeFile = async (contactsPath, data) => {
 
 const listContacts = async () => {
   const data = await readFile(contactsPath);
+
   console.table(data);
 };
 
