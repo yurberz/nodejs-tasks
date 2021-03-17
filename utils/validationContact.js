@@ -2,10 +2,12 @@ const Joi = require('joi')
 
 const schemaCreateContact = Joi.object({
   name: Joi.string().alphanum().min(3).max(20).required(),
-  email: Joi.string().email({
-    minDomainSegments: 2,
-    tlds: { allow: ['com', 'net', 'ua'] },
-  }),
+  email: Joi.string()
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: ['com', 'net', 'ua'] },
+    })
+    .required(),
   phone: Joi.string().alphanum().min(7).max(12).required(),
 })
 
