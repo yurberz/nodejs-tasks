@@ -2,6 +2,11 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const Users = require('../model/users')
 const { HttpCode, SUBSCRIPTIONS } = require('../utils/constants')
+const {
+  downloadAvatarFromUrl,
+  saveAvatarToStatic,
+  deletePreviousAvatar,
+} = require('../utils/create-avatar')
 
 const SECRET_KEY = process.env.JWT_SECRET
 
@@ -22,6 +27,12 @@ const reg = async (req, res, next) => {
 
     const newUser = await Users.create(req.body)
 
+    const { tmpPath, nameAvatar } = await downloadAvatarFromUrl(newUser)
+
+    const avatarURL = await saveAvatarToStatic(newUser.id, tmpPath, nameAvatar)
+
+    await Users.updateAvatar(newUser.id, avatarURL)
+
     return res.status(HttpCode.CREATED).json({
       status: 'success',
       code: HttpCode.CREATED,
@@ -29,6 +40,7 @@ const reg = async (req, res, next) => {
         user: {
           email: newUser.email,
           subscription: newUser.subscription,
+          avatarURL: newUser.avatarURL,
         },
       },
     })
@@ -146,10 +158,35 @@ const updateUserSubscription = async (req, res, next) => {
   }
 }
 
+const updateAvatar = async (req, res, next) => {
+  try {
+    const id = req.user.id
+
+    const pathFile = req.file.path
+
+    const fileName = `${Date.now()}-${req.file.originalname}`
+
+    const newAvatarUrl = await saveAvatarToStatic(id, pathFile, fileName)
+
+    await Users.updateAvatar(id, newAvatarUrl)
+
+    await deletePreviousAvatar(req.user.avatarURL)
+
+    return res.status(HttpCode.OK).json({
+      status: 'success',
+      code: HttpCode.OK,
+      data: { newAvatarUrl },
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
 module.exports = {
   reg,
   login,
   logout,
   getUserInfo,
   updateUserSubscription,
+  updateAvatar,
 }
