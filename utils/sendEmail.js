@@ -1,6 +1,6 @@
-const nodemailer = require("nodemailer");
-const Mailgen = require("mailgen");
-require("dotenv").config();
+const nodemailer = require('nodemailer')
+const Mailgen = require('mailgen')
+require('dotenv').config()
 
 const transporter = nodemailer.createTransport({
   host: process.env.HOST_SENDER,
@@ -10,15 +10,15 @@ const transporter = nodemailer.createTransport({
     user: process.env.MAIL_SENDER,
     pass: process.env.MAIL_PASS,
   },
-});
+})
 
 const mailGenerator = new Mailgen({
-  theme: "default",
+  theme: 'default',
   product: {
-    name: "Mailgen",
-    link: "https://localhost:3000/",
+    name: 'Mailgen',
+    link: 'https://localhost:3000/',
   },
-});
+})
 
 const sendMail = async (verifyToken, email) => {
   const template = {
@@ -26,28 +26,28 @@ const sendMail = async (verifyToken, email) => {
       name: email,
       intro: "Welcome to Mailgen! We're very excited to have you on board!",
       action: {
-        instructions: "To get started with Mailgen, please click here:",
+        instructions: 'To get started with Mailgen, please click here:',
         button: {
-          color: "#22BC66",
-          text: "Confirm your email",
+          color: '#22BC66',
+          text: 'Confirm your email',
           link: `http://localhost:3000/api/users/verify/${verifyToken}`,
         },
       },
       outro:
         "Need help, or have questions? Just reply to this email, we'd love to help.",
     },
-  };
+  }
 
-  const verificationEmail = mailGenerator.generate(template);
+  const verificationEmail = mailGenerator.generate(template)
 
   const msg = {
     from: process.env.MAIL_SENDER,
     to: email,
-    subject: "Email verification",
+    subject: 'Email verification',
     html: verificationEmail,
-  };
+  }
 
-  await transporter.sendMail(msg);
-};
+  await transporter.sendMail(msg)
+}
 
-module.exports = sendMail;
+module.exports = sendMail
