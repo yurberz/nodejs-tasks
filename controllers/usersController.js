@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
+const { v4: uuidv4 } = require('uuid')
 const Users = require('../model/users')
 const { HttpCode, SUBSCRIPTIONS } = require('../utils/constants')
+const sendMail = require('../utils/sendEmail')
 const {
   downloadAvatarFromUrl,
   saveAvatarToStatic,
@@ -25,7 +27,11 @@ const reg = async (req, res, next) => {
       })
     }
 
-    const newUser = await Users.create(req.body)
+    const verifyToken = uuidv4()
+
+    const newUser = await Users.create({ ...req.body, verifyToken })
+
+    await sendMail(verifyToken, email)
 
     const { tmpPath, nameAvatar } = await downloadAvatarFromUrl(newUser)
 
@@ -61,6 +67,15 @@ const login = async (req, res, next) => {
         code: HttpCode.UNAUTHORIZED,
         data: 'Unauthorized',
         message: 'Email or password is wrong',
+      })
+    }
+
+    if (!user.verify) {
+      return res.status(HttpCode.UNAUTHORIZED).json({
+        status: 'error',
+        code: HttpCode.UNAUTHORIZED,
+        data: 'Unauthorized',
+        message: 'Email is not verified',
       })
     }
 
@@ -182,6 +197,65 @@ const updateAvatar = async (req, res, next) => {
   }
 }
 
+const verify = async (req, res, next) => {
+  try {
+    const user = await Users.findByVerifyToken(req.params.verificationToken)
+
+    if (user) {
+      await Users.updateVerifyToken(user.id, true, null)
+      return res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        message: 'Verification successful!',
+      })
+    }
+
+    return res.status(HttpCode.NOT_FOUND).json({
+      status: 'error',
+      code: HttpCode.NOT_FOUND,
+      message: 'User not found',
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+const re = async (req, res, next) => {
+  try {
+    const { email } = req.body
+
+    if (!email) {
+      return res.status(HttpCode.BAD_REQUEST).json({
+        status: 'error',
+        code: HttpCode.BAD_REQUEST,
+        message: 'missing required field email',
+      })
+    }
+
+    const user = await Users.findByEmail(email)
+
+    if (user.verify) {
+      return res.status(HttpCode.BAD_REQUEST).json({
+        status: 'error',
+        code: HttpCode.BAD_REQUEST,
+        message: 'Verification has already been passed',
+      })
+    }
+
+    const verifyToken = user.verifyToken
+
+    await sendMail(verifyToken, email)
+
+    res.status(HttpCode.OK).json({
+      status: 'success',
+      code: HttpCode.OK,
+      message: 'Verification email sent',
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
 module.exports = {
   reg,
   login,
@@ -189,4 +263,6 @@ module.exports = {
   getUserInfo,
   updateUserSubscription,
   updateAvatar,
+  verify,
+  re,
 }
