@@ -24,4 +24,8 @@ router.patch(
   usersController.updateAvatar
 )
 
+router.get('/verify/:verificationToken', usersController.verify)
+
+router.post('/verify', usersController.re)
+
 module.exports = router
