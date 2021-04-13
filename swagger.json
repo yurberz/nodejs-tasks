@@ -5,7 +5,7 @@
     "title": "HW NodeJS API docs",
     "description": "TEST API documentation for HW NodeJS. [backend GitHub repository](https://github.com/yurberz/nodejs-tasks)"
   },
-  "servers": [{ "url": "https://for-the-swarm.herokuapp.com" }],
+  "servers": [{ "url": "https://for-the-swarm.herokuapp.com/api" }],
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "tags": [
