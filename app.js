@@ -21,7 +21,7 @@ app.use(cors())
 app.use(router)
 app.use('/api/contacts', contactsRouter)
 app.use('/api/users', usersRouter)
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerApiDocs))
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerApiDocs))
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' })
