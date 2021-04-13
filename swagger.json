@@ -1,0 +1,773 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "1.0.0",
+    "title": "HW NodeJS API docs",
+    "description": "TEST API documentation for HW NodeJS. [backend GitHub repository](https://github.com/yurberz/nodejs-tasks)"
+  },
+  "servers": [{ "url": "https://for-the-swarm.herokuapp.com" }],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Auth ENDPOINTS"
+    },
+    {
+      "name": "User",
+      "description": "User ENDPOINTS"
+    },
+    {
+      "name": "Contacts",
+      "description": "Contacts ENDPOINTS"
+    }
+  ],
+  "paths": {
+    "/users/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User registration",
+        "parameters": [],
+        "requestBody": {
+          "description": "Registration's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "409": {
+            "description": "Email in use",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User authentication",
+        "parameters": [],
+        "requestBody": {
+          "description": "Authentication's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Email is not verified",
+            "content": {}
+          },
+          "403": {
+            "description": "Email doesn't exist / Password is wrong",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User logout",
+        "security": [{ "Bearer": [] }],
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users/current": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get user information by access token",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserByToken"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update user subscription",
+        "security": [{ "Bearer": [] }],
+        "parameters": [],
+        "requestBody": {
+          "description": "Subscription's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditUserSubscriptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditUserSubscriptionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (Invalid credentials)",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users/avatars": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update user avatar",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Avatar's object",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/EditUserAvatarRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditUserAvatarResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/contacts": {
+      "get": {
+        "tags": ["Contacts"],
+        "summary": "Get contacts by access token",
+        "security": [{ "Bearer": [] }],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetContactsByToken"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body) / No token provided / More than 5 images provided / No images provided / Setting a price for: Free, work or trade category",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": ["Contacts"],
+        "summary": "Post a contact",
+        "security": [{ "Bearer": [] }],
+        "parameters": [],
+        "requestBody": {
+          "description": "Contact's object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostContactRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostContactResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body) / No token provided / More than 5 images provided / No images provided / Setting a price for: Free, work or trade category",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/contacts?page=1&limit=5": {
+      "get": {
+        "tags": ["Contacts"],
+        "summary": "Get pages with contacts by access token and query pagination",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Number of the page you want to load (1-3)",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of the limit  you want to load",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetContactsByToken"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body) / No token provided / More than 5 images provided / No images provided / Setting a price for: Free, work or trade category",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/contacts/{contactId}": {
+      "get": {
+        "tags": ["Contacts"],
+        "summary": "Get contact",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "contactId",
+            "in": "path",
+            "description": "Contact id ('id' field in contact object)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetContactById"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid id) / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Contact not found",
+            "content": {}
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Contacts"],
+        "summary": "Update contact",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "contactId",
+            "in": "path",
+            "description": "Contact id ('id' field in contact object)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "description": "Contact object (at least 1 field is required)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchContactRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchContactResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid id) / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Call not found / Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Contacts"],
+        "summary": "Remove contact",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "contactId",
+            "in": "path",
+            "description": "Contact id ('id' field in contact object)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful operation",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad request (invalid id) / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Contact not found",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegistrationRequest": {
+        "required": ["email", "password"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123"
+          }
+        }
+      },
+      "RegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "subscription": {
+            "type": "string",
+            "description": "subscription",
+            "example": "free"
+          },
+          "avatarURL": {
+            "type": "string",
+            "description": "avatarURL",
+            "example": "https://s.gravatar.com/avatar/aa785725ab2f6a530f673c8ec2b68979"
+          }
+        }
+      },
+      "LoginRequest": {
+        "required": ["email", "password"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Session's access token (needed for all requests)",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNzQ4N2JjMmNhMzRhMDAxYzBhNDJhMSIsImlhdCI6MTYxODI1MDAxNywiZXhwIjoxNjE4MjUzNjE3fQ.Uj1pjS1vbFzBGJ7Csayrb08mz9c-j9tc5CDbgmL669g"
+          },
+          "user": {
+            "type": "object",
+            "description": "User's data",
+            "properties": {
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "subscription": {
+                "type": "string",
+                "description": "subscription",
+                "example": "free"
+              }
+            }
+          }
+        }
+      },
+      "GetUserByToken": {
+        "type": "object",
+        "description": "User data by token",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "subscription": {
+            "type": "string",
+            "description": "subscription",
+            "example": "free"
+          }
+        }
+      },
+      "EditUserAvatarRequest": {
+        "type": "object",
+        "required": "file",
+        "description": "Update avatar",
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "Avatar image (there may be only one)",
+            "format": "binary"
+          }
+        }
+      },
+      "EditUserAvatarResponse": {
+        "type": "object",
+        "description": "Update avatar",
+        "properties": {
+          "newAvatarUrl": {
+            "type": "string",
+            "description": "New user avatar",
+            "example": "1618252003092-yurb.jpg"
+          }
+        }
+      },
+      "EditUserSubscriptionRequest": {
+        "type": "object",
+        "required": true,
+        "description": "Update user subscription",
+        "properties": {
+          "subscription": {
+            "type": "string",
+            "description": "subscription",
+            "example": "pro",
+            "enum": ["free", "pro", "premium"]
+          }
+        }
+      },
+      "EditUserSubscriptionResponse": {
+        "type": "object",
+        "description": "Update user subscription",
+        "properties": {
+          "subscription": {
+            "type": "string",
+            "description": "subscription",
+            "example": "pro"
+          }
+        }
+      },
+      "GetContactsByToken": {
+        "type": "object",
+        "description": "Get contacts by token",
+        "properties": {
+          "contacts": {
+            "type": "array",
+            "example": [
+              {
+                "_id": "60749e1f79b726001ccc1805",
+                "name": "TestUser",
+                "email": "testuser45@mail.com",
+                "phone": "3456746",
+                "owner": {
+                  "name": "Guest",
+                  "sex": "none",
+                  "email": "user@example.com"
+                },
+                "createdAt": "2021-04-12T19:23:11.165Z",
+                "updatedAt": "2021-04-12T19:23:11.165Z"
+              },
+              {
+                "_id": "60749e1f79b726001ccc1805",
+                "name": "TestUser1",
+                "email": "testuser45@mail.com",
+                "phone": "3456746",
+                "owner": {
+                  "name": "Guest",
+                  "sex": "none",
+                  "email": "user@example.com"
+                },
+                "createdAt": "2021-04-12T19:23:11.165Z",
+                "updatedAt": "2021-04-12T19:23:11.165Z"
+              },
+              {
+                "_id": "60749e1f79b726001ccc1805",
+                "name": "TestUser2",
+                "email": "testuser45@mail.com",
+                "phone": "3456746",
+                "owner": {
+                  "name": "Guest",
+                  "sex": "none",
+                  "email": "user@example.com"
+                },
+                "createdAt": "2021-04-12T19:23:11.165Z",
+                "updatedAt": "2021-04-12T19:23:11.165Z"
+              }
+            ]
+          },
+          "total": {
+            "type": "string",
+            "example": "8"
+          },
+          "page": {
+            "type": "string",
+            "example": "1"
+          },
+          "limit": {
+            "type": "string",
+            "example": "5"
+          }
+        }
+      },
+      "PostContactRequest": {
+        "type": "object",
+        "description": "Add contact",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Contact name",
+            "example": "Test9"
+          },
+          "email": {
+            "type": "string",
+            "description": "Contact email",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Contact phone",
+            "example": "+380000000000"
+          }
+        }
+      },
+      "PostContactResponse": {
+        "type": "object",
+        "description": "Add contact",
+        "properties": {
+          "contact": {
+            "type": "array",
+            "example": {
+              "_id": "60749e1f79b726001ccc1805",
+              "name": "Test9",
+              "email": "user@example.com",
+              "phone": "+380000000000",
+              "owner": "607487bc2ca34a001c0a42a1",
+              "createdAt": "2021-04-12T19:47:08.972Z",
+              "updatedAt": "2021-04-12T19:47:08.972Z"
+            }
+          }
+        }
+      },
+      "GetContactById": {
+        "type": "object",
+        "description": "Get contact by id",
+        "properties": {
+          "contact": {
+            "type": "array",
+            "example": {
+              "_id": "60749e1f79b726001ccc1805",
+              "name": "Test9",
+              "email": "user@example.com",
+              "phone": "+380000000000",
+              "owner": {
+                "name": "Guest",
+                "sex": "none",
+                "email": "user1@gmail.com"
+              },
+              "createdAt": "2021-04-12T19:47:08.972Z",
+              "updatedAt": "2021-04-12T19:47:08.972Z"
+            }
+          }
+        }
+      },
+      "PatchContactRequest": {
+        "type": "object",
+        "description": "Update contact",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Contact name",
+            "example": "Testo567"
+          },
+          "email": {
+            "type": "string",
+            "description": "Contact email",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Contact phone",
+            "example": "+380000000024"
+          }
+        }
+      },
+      "PatchContactResponse": {
+        "type": "object",
+        "description": "Update contact",
+        "properties": {
+          "contact": {
+            "type": "array",
+            "example": {
+              "_id": "60749e1f79b726001ccc1805",
+              "name": "Test567",
+              "email": "user@example.com",
+              "phone": "+380000000024",
+              "owner": "607487bc2ca34a001c0a42a1",
+              "createdAt": "2021-04-12T19:47:08.972Z",
+              "updatedAt": "2021-04-12T19:47:08.972Z"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

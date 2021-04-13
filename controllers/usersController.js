@@ -62,10 +62,10 @@ const login = async (req, res, next) => {
     const user = await Users.findByEmail(email)
 
     if (!user || !(await user.validPassword(password))) {
-      return res.status(HttpCode.UNAUTHORIZED).json({
+      return res.status(HttpCode.FORBIDDEN).json({
         status: 'error',
-        code: HttpCode.UNAUTHORIZED,
-        data: 'Unauthorized',
+        code: HttpCode.FORBIDDEN,
+        data: 'Bad request',
         message: 'Email or password is wrong',
       })
     }
