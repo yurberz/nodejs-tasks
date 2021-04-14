@@ -246,7 +246,7 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body) / No token provided / More than 5 images provided / No images provided / Setting a price for: Free, work or trade category",
+            "description": "Bad request (invalid request body) / No token provided",
             "content": {}
           },
           "401": {
@@ -283,7 +283,7 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body) / No token provided / More than 5 images provided / No images provided / Setting a price for: Free, work or trade category",
+            "description": "Bad request (invalid request body) / No token provided",
             "content": {}
           },
           "401": {
@@ -324,7 +324,7 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body) / No token provided / More than 5 images provided / No images provided / Setting a price for: Free, work or trade category",
+            "description": "Bad request (invalid request body) / No token provided",
             "content": {}
           },
           "401": {
